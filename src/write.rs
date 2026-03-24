@@ -1,4 +1,6 @@
-use crate::types::{BitPatternField, FixedWidthField, TermAnnotation, Value, VariableLengthField};
+use crate::types::{
+    BitPatternField, FieldTable, FixedWidthField, TermAnnotation, Value, VariableLengthField,
+};
 
 /// Trait for rendering MPEG specification syntax structures.
 ///
@@ -123,6 +125,47 @@ pub trait SyntaxWrite {
 
     /// End the switch statement.
     fn end_switch(&mut self) -> Result<(), Self::Error>;
+
+    // ── Field tables ──────────────────────────────────────────
+
+    /// Render a table of homogeneous field values from a loop.
+    ///
+    /// The default implementation expands the table into a `for` loop with
+    /// one iteration per row. Compact renderers override this to produce
+    /// inline lists or aligned tables.
+    fn field_table(&mut self, table: &FieldTable<'_>) -> Result<(), Self::Error> {
+        let n = table.rows.len();
+        let header = if table.columns.len() == 1 {
+            format!("i = 0; i < {n}; i++")
+        } else {
+            format!("i = 0; i < {n}; i++")
+        };
+        self.begin_for(&header, &[])?;
+        for (i, row) in table.rows.iter().enumerate() {
+            self.for_iteration("i", i as u64)?;
+            for (col_idx, col) in table.columns.iter().enumerate() {
+                if let Some(val) = row.get(col_idx) {
+                    let name = format!("{}[{i}]", col.name);
+                    match col.bits {
+                        Some(bits) => self.fixed_width_field(&FixedWidthField {
+                            name: &name,
+                            bits,
+                            descriptor: col.descriptor,
+                            value: Some(val.clone()),
+                            comment: None,
+                        })?,
+                        None => self.variable_length_field(&VariableLengthField {
+                            name: &name,
+                            descriptor: col.descriptor,
+                            value: Some(val.clone()),
+                            comment: None,
+                        })?,
+                    }
+                }
+            }
+        }
+        self.end_for()
+    }
 
     // ── Assignments ─────────────────────────────────────────
 

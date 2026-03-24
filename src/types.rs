@@ -70,3 +70,24 @@ pub struct BitPatternField<'a> {
     /// The actual value
     pub value: Value,
 }
+
+/// Column definition for a [`FieldTable`].
+pub struct ColumnDef<'a> {
+    /// Column name (used as field name in expanded form)
+    pub name: &'a str,
+    /// Type descriptor, e.g. `"uimsbf"`, `"ue(v)"`
+    pub descriptor: &'a str,
+    /// Bit width per value, or `None` for variable-length coded columns
+    pub bits: Option<u32>,
+}
+
+/// A table of homogeneous field values from a loop.
+///
+/// Producers emit this instead of a `begin_for`/`end_for` loop when every
+/// iteration has the same fixed set of fields. The default `SyntaxWrite`
+/// implementation expands it into a loop; compact renderers can collapse it
+/// into an inline list or aligned table.
+pub struct FieldTable<'a> {
+    pub columns: &'a [ColumnDef<'a>],
+    pub rows: &'a [&'a [Value]],
+}

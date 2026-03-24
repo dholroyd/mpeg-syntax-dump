@@ -1,5 +1,6 @@
 pub mod text;
 pub mod ansi;
+pub mod compact;
 
 use std::io;
 
