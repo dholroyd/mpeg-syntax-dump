@@ -2,5 +2,8 @@
 name = "mpeg-syntax-dump"
 version = "0.1.0"
 edition = "2024"
+description = "Dump data in the style of MPEG speficication pseudocode"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/dholroyd/mpeg-syntax-dump.git"
 
 [dependencies]
