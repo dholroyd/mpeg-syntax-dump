@@ -11,8 +11,8 @@ const RESET: &str = "\x1b[0m";
 
 /// Bold magenta for keywords (if, for, while, else, do)
 const KW: &str = "\x1b[1;35m";
-/// Bold cyan for element names
-const ELEM: &str = "\x1b[1;36m";
+/// Cyan for element names
+const ELEM: &str = "\x1b[36m";
 /// Bold for field names (the actual bitstream data fields)
 const FIELD: &str = "\x1b[1m";
 /// Yellow for descriptors
